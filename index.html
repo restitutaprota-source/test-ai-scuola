@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Maturità AI — DM 219/2025</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,300&family=DM+Sans:wght@300;400;500&display=swap');
+
+:root {
+  --blu:#0C447C; --blu-m:#185FA5; --blu-l:#E6F1FB; --blu-b:#B5D4F4;
+  --ver:#3B6D11; --ver-l:#EAF3DE; --ver-b:#C0DD97;
+  --amb:#854F0B; --amb-l:#FAEEDA;
+  --vio:#3C3489; --vio-l:#EEEDFE; --vio-b:#CECBF6;
+  --tea:#0F6E56; --tea-l:#E1F5EE;
+  --cor:#993C1D; --cor-l:#FAECE7;
+  --gray:#5F5E5A; --gray-l:#F1EFE8; --gray-b:#D3D1C7;
+  --txt:#1a1a18; --txt2:#555550; --bg:#FAFAF8; --white:#FFFFFF;
+  --radius:12px; --radius-sm:8px;
+  --shadow:0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;line-height:1.6}
+
+/* ── Schermata anagrafica ── */
+#screen-intro{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:2rem 1rem}
+.intro-wrap{max-width:500px;width:100%;text-align:center}
+.intro-eyebrow{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--blu-m);font-weight:500;margin-bottom:1rem}
+.intro-title{font-family:'Fraunces',serif;font-size:clamp(28px,6vw,42px);font-weight:500;line-height:1.2;color:var(--blu);margin-bottom:.75rem}
+.intro-sub{font-size:14px;color:var(--txt2);line-height:1.65;margin-bottom:2rem;max-width:400px;margin-left:auto;margin-right:auto}
+.form-group{text-align:left;margin-bottom:1rem}
+.form-group label{font-size:12px;font-weight:500;color:var(--txt2);display:block;margin-bottom:5px;letter-spacing:.3px}
+.form-group input,.form-group select{width:100%;padding:10px 14px;border:1px solid var(--gray-b);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--txt);background:var(--white);outline:none;transition:border-color .15s}
+.form-group input:focus,.form-group select:focus{border-color:var(--blu-m)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-start{width:100%;padding:13px;background:var(--blu);color:var(--white);border:none;border-radius:var(--radius);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;margin-top:.75rem;letter-spacing:.3px;transition:background .15s}
+.btn-start:hover{background:var(--vio)}
+.dm-badge{display:inline-block;margin-top:1.5rem;font-size:11px;color:var(--txt2);background:var(--gray-l);padding:4px 12px;border-radius:20px}
+
+/* ── Schermata test ── */
+#screen-test{display:none;min-height:100vh;padding:0}
+.test-header{background:var(--white);border-bottom:1px solid #eee;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.test-logo{font-family:'Fraunces',serif;font-size:16px;font-weight:500;color:var(--blu)}
+.test-progress-wrap{flex:1;max-width:260px;margin:0 1.5rem}
+.test-progress-bar{height:4px;background:#eee;border-radius:2px;overflow:hidden}
+.test-progress-fill{height:100%;background:var(--blu-m);border-radius:2px;transition:width .35s ease}
+.test-progress-label{font-size:11px;color:var(--txt2);margin-top:4px;text-align:right}
+.test-body{max-width:620px;margin:0 auto;padding:2.5rem 1.5rem}
+.area-badge{font-size:11px;font-weight:500;padding:3px 10px;border-radius:12px;letter-spacing:.5px;display:inline-block;margin-bottom:1rem}
+.q-text{font-family:'Fraunces',serif;font-size:clamp(17px,3vw,21px);font-weight:300;color:var(--txt);line-height:1.45;margin-bottom:1.5rem}
+.opts{display:flex;flex-direction:column;gap:9px;margin-bottom:2rem}
+.opt{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border-radius:var(--radius);border:1.5px solid var(--gray-b);cursor:pointer;font-size:13.5px;color:var(--txt2);line-height:1.5;transition:all .15s;background:var(--white)}
+.opt:hover{border-color:var(--blu-b);background:var(--blu-l)}
+.opt.sel{border-color:var(--blu-m);background:var(--blu-l);color:var(--blu)}
+.opt-radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--gray-b);flex-shrink:0;margin-top:1px;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.opt.sel .opt-radio{border-color:var(--blu-m);background:var(--blu-m)}
+.opt.sel .opt-radio::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff}
+.test-nav{display:flex;justify-content:space-between;align-items:center}
+.btn-nav{padding:10px 22px;border-radius:var(--radius-sm);border:1.5px solid var(--gray-b);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;background:var(--white);color:var(--txt2);transition:all .15s}
+.btn-nav:hover{border-color:var(--blu-b)}
+.btn-nav.primary{background:var(--blu);color:#fff;border-color:var(--blu)}
+.btn-nav.primary:hover{background:var(--vio);border-color:var(--vio)}
+.btn-nav:disabled{opacity:.35;cursor:default}
+
+/* ── Schermata invio ── */
+#screen-sending{display:none;min-height:100vh;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:2rem}
+.spinner{width:44px;height:44px;border:3px solid var(--gray-b);border-top-color:var(--blu-m);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 1.5rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Schermata risultati ── */
+#screen-result{display:none;min-height:100vh;padding:0}
+.result-header{background:var(--blu);padding:2rem 1.5rem;text-align:center;color:#fff}
+.result-title{font-family:'Fraunces',serif;font-size:28px;font-weight:300;margin-bottom:.3rem}
+.result-nome{font-size:14px;opacity:.8}
+.result-body{max-width:640px;margin:0 auto;padding:2rem 1.5rem}
+.score-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:1.5rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:1.25rem}
+.ring-svg{flex-shrink:0}
+.score-info{flex:1}
+.score-level{font-family:'Fraunces',serif;font-size:22px;color:var(--txt);margin-bottom:.2rem}
+.score-desc{font-size:13px;color:var(--txt2);line-height:1.55}
+.aree-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem}
+.area-card{background:var(--white);border-radius:var(--radius-sm);box-shadow:var(--shadow);padding:1rem}
+.area-card-name{font-size:11px;font-weight:500;letter-spacing:.5px;margin-bottom:.5rem}
+.area-bar-wrap{height:5px;background:var(--gray-l);border-radius:3px;margin-bottom:.3rem;overflow:hidden}
+.area-bar-fill{height:100%;border-radius:3px}
+.area-pct{font-size:13px;font-weight:500}
+.piano-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:1.5rem;margin-bottom:1.25rem}
+.piano-title{font-family:'Fraunces',serif;font-size:18px;color:var(--txt);margin-bottom:.25rem}
+.piano-sub{font-size:12px;color:var(--txt2);margin-bottom:1rem}
+.piano-item{display:flex;gap:10px;align-items:flex-start;padding:.55rem 0;border-bottom:1px solid var(--gray-l)}
+.piano-item:last-child{border-bottom:none}
+.piano-badge{font-size:10px;font-weight:500;padding:2px 8px;border-radius:8px;white-space:nowrap;flex-shrink:0;margin-top:2px}
+.piano-text{font-size:13px;color:var(--txt2);line-height:1.45}
+.piano-text strong{color:var(--txt);font-weight:500}
+.ok-box{background:var(--tea-l);border-radius:var(--radius-sm);padding:1rem 1.25rem;margin-bottom:1.25rem;font-size:13px;color:var(--tea);line-height:1.6;border-left:3px solid var(--tea)}
+.btn-again{display:block;width:100%;padding:13px;background:var(--gray-l);color:var(--txt2);border:none;border-radius:var(--radius);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;text-align:center;margin-top:.5rem}
+
+/* ── Dashboard ── */
+#screen-dash{display:none;min-height:100vh;padding:0}
+.dash-header{background:var(--vio);padding:1.25rem 1.5rem;display:flex;align-items:center;justify-content:space-between}
+.dash-title{font-family:'Fraunces',serif;font-size:20px;color:#fff}
+.dash-btn{font-size:12px;padding:6px 14px;border-radius:20px;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);cursor:pointer}
+.dash-body{max-width:760px;margin:0 auto;padding:1.5rem}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.5rem}
+.kpi{background:var(--white);border-radius:var(--radius-sm);box-shadow:var(--shadow);padding:1rem;text-align:center}
+.kpi-n{font-family:'Fraunces',serif;font-size:28px;color:var(--blu);font-weight:300}
+.kpi-l{font-size:11px;color:var(--txt2);margin-top:2px}
+.dist-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:1.25rem;margin-bottom:1rem}
+.dist-title{font-size:13px;font-weight:500;color:var(--txt);margin-bottom:.85rem}
+.dist-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:.5rem;font-size:12px;color:var(--txt2)}
+.dist-bar-bg{flex:1;height:8px;background:var(--gray-l);border-radius:4px;overflow:hidden}
+.dist-bar-fill{height:100%;border-radius:4px;transition:width .6s ease}
+.dist-val{width:28px;text-align:right;font-weight:500}
+.table-wrap{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:1rem}
+.dash-table{width:100%;border-collapse:collapse;font-size:12px}
+.dash-table th{background:var(--vio-l);color:var(--vio);font-weight:500;padding:.65rem .85rem;text-align:left;font-size:11px;letter-spacing:.5px}
+.dash-table td{padding:.6rem .85rem;border-bottom:1px solid var(--gray-l);color:var(--txt2);vertical-align:middle}
+.dash-table tr:last-child td{border-bottom:none}
+.dash-table tr:hover td{background:var(--gray-l)}
+.level-pill{font-size:10px;font-weight:500;padding:2px 8px;border-radius:8px}
+.no-data{text-align:center;padding:2rem;color:var(--txt2);font-size:13px;font-style:italic}
+.btn-export{font-size:12px;padding:7px 16px;border-radius:var(--radius-sm);background:var(--ver-l);color:var(--ver);border:1px solid var(--ver-b);cursor:pointer;font-family:'DM Sans',sans-serif}
+.btn-export:hover{background:var(--ver-b)}
+.dash-link-box{background:var(--blu-l);border-radius:var(--radius-sm);padding:.85rem 1rem;margin-bottom:1rem;font-size:12px;color:var(--blu);line-height:1.6}
+.dash-link-box a{color:var(--blu-m);word-break:break-all}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     CONFIGURAZIONE — modifica questi valori
+     ══════════════════════════════════════════════ -->
+<script>
+// 1. URL del tuo Google Apps Script Web App (vedi istruzioni nel documento allegato)
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwaqsM4iAUn3O5Mq5s5YU__aA7gytqZAMOJYctCsFv8Y-enlsYFlzMozsz3JSY8ofvs/exec ";
+
+// 2. URL della dashboard (sarà questo stesso file pubblicato o condiviso)
+//    Lascia vuoto per usare window.location.href automaticamente
+const DASHBOARD_URL = "";
+
+// 3. Codice di accesso per la dashboard (cambialo con qualcosa di tuo)
+const DASHBOARD_PASSWORD = "FormazioneAI2026";
+
+// 4. Nome dell'ente erogatore (compare nell'intestazione)
+const NOME_ENTE = "Resti Prota";
+</script>
+
+<!-- ══ SCREEN 1: INTRO / ANAGRAFICA ══ -->
+<div id="screen-intro">
+  <div class="intro-wrap">
+    <div class="intro-eyebrow">DM 219/2025 — Formazione AI</div>
+    <h1 class="intro-title">Test di maturità<br><em style="font-style:italic;font-weight:300">Intelligenza Artificiale</em></h1>
+    <p class="intro-sub">Rispondi a 8 domande per individuare il tuo livello di competenza AI e ricevere un piano formativo personalizzato. Durata: circa 4 minuti.</p>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="nome">Nome *</label>
+        <input type="text" id="nome" placeholder="Mario" required>
+      </div>
+      <div class="form-group">
+        <label for="cognome">Cognome *</label>
+        <input type="text" id="cognome" placeholder="Rossi" required>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="scuola">Nome della scuola *</label>
+      <input type="text" id="scuola" placeholder="es. I.C. Manzoni - Milano" required>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="email">Email istituzionale *</label>
+        <input type="email" id="email" placeholder="mario.rossi@scuola.edu.it" required>
+      </div>
+      <div class="form-group">
+        <label for="profilo">Profilo *</label>
+        <select id="profilo">
+          <option value="">— seleziona —</option>
+          <option value="Docente">Docente</option>
+          <option value="Personale ATA">Personale ATA</option>
+          <option value="Dirigente scolastico">Dirigente scolastico</option>
+          <option value="Formatore">Formatore</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="materia">Disciplina / Ruolo specifico (opzionale)</label>
+      <input type="text" id="materia" placeholder="es. Matematica, Segreteria, Referente digitale...">
+    </div>
+    <button class="btn-start" onclick="avviaTest()">Inizia il test →</button>
+    <div class="dm-badge">Dati trattati ai sensi del GDPR · Solo uso formativo interno</div>
+    <div style="margin-top:1rem;text-align:center">
+      <span style="font-size:12px;color:var(--txt2)">Sei il coordinatore? </span>
+      <button onclick="mostraDashLogin()" style="font-size:12px;color:var(--blu-m);background:none;border:none;cursor:pointer;text-decoration:underline">Accedi alla dashboard →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCREEN 2: TEST ══ -->
+<div id="screen-test">
+  <div class="test-header">
+    <div class="test-logo">Maturità AI</div>
+    <div class="test-progress-wrap">
+      <div class="test-progress-bar"><div class="test-progress-fill" id="prog-fill" style="width:0%"></div></div>
+      <div class="test-progress-label" id="prog-label">0 / 8</div>
+    </div>
+    <div style="font-size:12px;color:var(--txt2)" id="test-nome-label"></div>
+  </div>
+  <div class="test-body">
+    <div id="area-badge" class="area-badge"></div>
+    <div id="q-text" class="q-text"></div>
+    <div id="opts" class="opts"></div>
+    <div class="test-nav">
+      <button class="btn-nav" id="btn-prev" onclick="prevQ()">← Indietro</button>
+      <button class="btn-nav primary" id="btn-next" onclick="nextQ()" disabled>Avanti →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCREEN 3: INVIO ══ -->
+<div id="screen-sending" style="display:none">
+  <div class="spinner"></div>
+  <div style="font-family:'Fraunces',serif;font-size:20px;color:var(--blu);margin-bottom:.5rem">Elaborazione in corso…</div>
+  <div style="font-size:13px;color:var(--txt2)">Calcolo il tuo piano formativo e salvo i risultati.</div>
+</div>
+
+<!-- ══ SCREEN 4: RISULTATI ══ -->
+<div id="screen-result">
+  <div class="result-header">
+    <div class="result-title">Il tuo profilo AI</div>
+    <div class="result-nome" id="result-nome"></div>
+  </div>
+  <div class="result-body">
+    <div class="score-card">
+      <svg class="ring-svg" viewBox="0 0 80 80" width="80" height="80" aria-label="Punteggio di maturità AI">
+        <circle cx="40" cy="40" r="32" fill="none" stroke="#E6F1FB" stroke-width="7"/>
+        <circle cx="40" cy="40" r="32" fill="none" stroke-width="7" stroke-linecap="round"
+          id="ring-circle" transform="rotate(-90 40 40)"/>
+        <text x="40" y="40" text-anchor="middle" dominant-baseline="central"
+          font-family="'Fraunces',serif" font-size="15" id="ring-text" fill="#0C447C"></text>
+      </svg>
+      <div class="score-info">
+        <div class="score-level" id="score-level"></div>
+        <div class="score-desc" id="score-desc"></div>
+      </div>
+    </div>
+    <div class="aree-grid" id="aree-grid"></div>
+    <div class="piano-card">
+      <div class="piano-title">Piano formativo consigliato</div>
+      <div class="piano-sub" id="piano-sub"></div>
+      <div id="piano-items"></div>
+    </div>
+    <div class="ok-box" id="ok-box"></div>
+    <button class="btn-again" onclick="ricomincia()">← Torna all'inizio</button>
+  </div>
+</div>
+
+<!-- ══ SCREEN 5: DASHBOARD ══ -->
+<div id="screen-dash">
+  <div class="dash-header">
+    <div class="dash-title">Dashboard coordinatore</div>
+    <div style="display:flex;gap:8px">
+      <button class="btn-export" onclick="esportaCSV()">Esporta CSV</button>
+      <button class="dash-btn" onclick="aggiornaDash()">↻ Aggiorna</button>
+      <button class="dash-btn" onclick="chiudiDash()">✕ Chiudi</button>
+    </div>
+  </div>
+  <div class="dash-body">
+    <div class="dash-link-box">
+      <strong>Link test da condividere con il personale:</strong><br>
+      <a href="#" id="dash-link" target="_blank"></a>
+      <br><span style="font-size:11px;opacity:.8">I risultati appariranno in questa dashboard e nel Google Sheets collegato.</span>
+    </div>
+    <div class="kpi-grid" id="kpi-grid"></div>
+    <div class="dist-card" id="dist-livelli"></div>
+    <div class="dist-card" id="dist-profili"></div>
+    <div class="table-wrap">
+      <table class="dash-table">
+        <thead><tr>
+          <th>Nome</th><th>Scuola</th><th>Profilo</th>
+          <th>Punteggio</th><th>Livello</th><th>Data</th>
+        </tr></thead>
+        <tbody id="dash-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// DATI DEL TEST
+// ══════════════════════════════════════════════
+const DOMANDE = [
+  { area:"Alfabetizzazione AI", colore:"#E6F1FB", fgcol:"#0C447C",
+    testo:"Come descriveresti la tua conoscenza di base dell'AI (LLM, machine learning, reti neurali)?",
+    opzioni:[
+      {txt:"Non ne so quasi nulla, è un argomento completamente nuovo per me",p:0},
+      {txt:"Ho sentito parlare di AI ma non ho approfondito",p:1},
+      {txt:"Conosco i concetti fondamentali e ho qualche nozione tecnica",p:2},
+      {txt:"Ho una buona comprensione dei principali sistemi AI e dei loro meccanismi",p:3}]},
+  { area:"Alfabetizzazione AI", colore:"#E6F1FB", fgcol:"#0C447C",
+    testo:"Hai mai utilizzato strumenti come ChatGPT, Gemini, Copilot o Perplexity?",
+    opzioni:[
+      {txt:"Mai",p:0},
+      {txt:"Ho provato una o due volte per curiosità personale",p:1},
+      {txt:"Lo uso occasionalmente per compiti professionali o personali",p:2},
+      {txt:"Lo uso regolarmente, con piena consapevolezza dei suoi limiti",p:3}]},
+  { area:"Strumenti e prompt", colore:"#EAF3DE", fgcol:"#3B6D11",
+    testo:"Sai cos'è un prompt e come strutturarne uno efficace per ottenere risultati utili?",
+    opzioni:[
+      {txt:"No, non conosco questo termine",p:0},
+      {txt:"Ho sentito il termine ma non so come usarlo bene",p:1},
+      {txt:"So come scrivere un prompt di base con ruolo, contesto e richiesta",p:2},
+      {txt:"Uso tecniche avanzate: ruolo, formato, catene di prompt, few-shot, zero-shot",p:3}]},
+  { area:"Strumenti e prompt", colore:"#EAF3DE", fgcol:"#3B6D11",
+    testo:"Conosci NotebookLM, Diffit, MagicSchool AI o altri strumenti AI specifici per la scuola?",
+    opzioni:[
+      {txt:"Non conosco nessuno di questi strumenti",p:0},
+      {txt:"Ho sentito parlare di qualcuno ma non li ho mai usati",p:1},
+      {txt:"Ne ho usati uno o due con risultati discreti",p:2},
+      {txt:"Uso regolarmente più strumenti AI specifici per la scuola nel mio lavoro",p:3}]},
+  { area:"Applicazione professionale", colore:"#FAEEDA", fgcol:"#854F0B",
+    testo:"Hai mai usato l'AI per preparare materiali professionali (lezioni, circolari, verbali, relazioni, PDP)?",
+    opzioni:[
+      {txt:"Mai",p:0},
+      {txt:"Ho provato una volta ma non ho ripetuto",p:1},
+      {txt:"Lo faccio occasionalmente con risultati soddisfacenti",p:2},
+      {txt:"È parte integrante della mia routine di lavoro quotidiana",p:3}]},
+  { area:"Applicazione professionale", colore:"#FAEEDA", fgcol:"#854F0B",
+    testo:"Come valuti la tua capacità di integrare l'AI nella tua pratica professionale quotidiana?",
+    opzioni:[
+      {txt:"Non l'ho ancora integrata",p:0},
+      {txt:"Ho fatto qualche esperimento isolato",p:1},
+      {txt:"Ho sperimentato alcune attività con risultati positivi e ripetibili",p:2},
+      {txt:"Ho un approccio sistematico, misuro l'impatto e condivido le buone pratiche",p:3}]},
+  { area:"Etica e sicurezza", colore:"#EEEDFE", fgcol:"#3C3489",
+    testo:"Conosci le norme su privacy e GDPR applicate all'uso di strumenti AI con dati di studenti o dipendenti?",
+    opzioni:[
+      {txt:"No, non ho mai approfondito questo aspetto",p:0},
+      {txt:"Ho nozioni generali sul GDPR ma non specifiche per la scuola",p:1},
+      {txt:"Conosco i principali obblighi e cerco di applicarli nel mio lavoro",p:2},
+      {txt:"Ho un'ottima padronanza normativa e formo altri colleghi su questo tema",p:3}]},
+  { area:"Etica e sicurezza", colore:"#EEEDFE", fgcol:"#3C3489",
+    testo:"Sai riconoscere un'allucinazione o un errore generato da un'AI e come verificare l'output?",
+    opzioni:[
+      {txt:"Non sono sicuro/a di saperlo fare",p:0},
+      {txt:"A volte riconosco qualcosa di strano ma non sempre con certezza",p:1},
+      {txt:"Generalmente sì, e so come verificare con fonti esterne",p:2},
+      {txt:"Ho strategie sistematiche di verifica e so insegnarle ad altri",p:3}]},
+];
+
+const MODULI_PIANO = {
+  B1:{cod:"B1",livello:"Base",titolo:"AI: cosa è, come funziona, cosa non è",bg:"#EAF3DE",fg:"#3B6D11"},
+  B2:{cod:"B2",livello:"Base",titolo:"Uso sicuro, GDPR e AI Act",bg:"#EAF3DE",fg:"#3B6D11"},
+  B3:{cod:"B3",livello:"Base",titolo:"Prompt engineering di base",bg:"#EAF3DE",fg:"#3B6D11"},
+  I1:{cod:"I1",livello:"Intermedio",titolo:"Gemini e NotebookLM per la scuola",bg:"#E6F1FB",fg:"#0C447C"},
+  I2:{cod:"I2",livello:"Intermedio",titolo:"AI e progettazione didattica",bg:"#E6F1FB",fg:"#0C447C"},
+  I3:{cod:"I3",livello:"Intermedio",titolo:"AI e valutazione degli apprendimenti",bg:"#E6F1FB",fg:"#0C447C"},
+  I4:{cod:"I4",livello:"Intermedio",titolo:"AI per la segreteria e gli uffici ATA",bg:"#E6F1FB",fg:"#0C447C"},
+  I5:{cod:"I5",livello:"Intermedio",titolo:"AI per la dirigenza scolastica",bg:"#E6F1FB",fg:"#0C447C"},
+  I6:{cod:"I6",livello:"Intermedio",titolo:"AI per l'inclusione: BES, DSA, EES",bg:"#E6F1FB",fg:"#0C447C"},
+  A1:{cod:"A1",livello:"Avanzato",titolo:"Chatbot tutor per gli studenti",bg:"#EEEDFE",fg:"#3C3489"},
+  A2:{cod:"A2",livello:"Avanzato",titolo:"AI e nuovi curricoli d'istituto",bg:"#EEEDFE",fg:"#3C3489"},
+  A3:{cod:"A3",livello:"Avanzato",titolo:"AI, etica avanzata e cittadinanza digitale",bg:"#EEEDFE",fg:"#3C3489"},
+  A4:{cod:"A4",livello:"Avanzato",titolo:"Formare i formatori sull'AI",bg:"#EEEDFE",fg:"#3C3489"},
+  A6:{cod:"A6",livello:"Avanzato",titolo:"AI per la governance e il PTOF",bg:"#EEEDFE",fg:"#3C3489"},
+};
+
+// ══════════════════════════════════════════════
+// STATO GLOBALE
+// ══════════════════════════════════════════════
+let anagrafica = {};
+let curQ = 0;
+let risposte = new Array(DOMANDE.length).fill(undefined);
+let risultatiLocali = JSON.parse(localStorage.getItem('maturita_ai_risultati') || '[]');
+
+// ══════════════════════════════════════════════
+// NAVIGAZIONE SCHERMATE
+// ══════════════════════════════════════════════
+function mostra(id) {
+  ['screen-intro','screen-test','screen-sending','screen-result','screen-dash']
+    .forEach(s => { document.getElementById(s).style.display = 'none'; });
+  const el = document.getElementById(id);
+  el.style.display = id === 'screen-sending' ? 'flex' : 'block';
+  window.scrollTo(0,0);
+}
+
+// ══════════════════════════════════════════════
+// AVVIO TEST
+// ══════════════════════════════════════════════
+function avviaTest() {
+  const nome = document.getElementById('nome').value.trim();
+  const cognome = document.getElementById('cognome').value.trim();
+  const scuola = document.getElementById('scuola').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const profilo = document.getElementById('profilo').value;
+  if (!nome || !cognome || !scuola || !email || !profilo) {
+    alert('Compila tutti i campi obbligatori (contrassegnati con *).');
+    return;
+  }
+  anagrafica = { nome, cognome, scuola, email, profilo,
+    materia: document.getElementById('materia').value.trim() };
+  curQ = 0;
+  risposte = new Array(DOMANDE.length).fill(undefined);
+  document.getElementById('test-nome-label').textContent = nome + ' ' + cognome;
+  mostra('screen-test');
+  renderDomanda();
+}
+
+// ══════════════════════════════════════════════
+// RENDERING DOMANDE
+// ══════════════════════════════════════════════
+function renderDomanda() {
+  const q = DOMANDE[curQ];
+  const pct = Math.round((curQ / DOMANDE.length) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = curQ + ' / ' + DOMANDE.length;
+  const badge = document.getElementById('area-badge');
+  badge.textContent = q.area;
+  badge.style.background = q.colore;
+  badge.style.color = q.fgcol;
+  document.getElementById('q-text').textContent = q.testo;
+  const opts = document.getElementById('opts');
+  opts.innerHTML = q.opzioni.map((o,i) => `
+    <div class="opt ${risposte[curQ]===i?'sel':''}" onclick="selRis(${i})">
+      <div class="opt-radio"></div>
+      <span>${o.txt}</span>
+    </div>`).join('');
+  document.getElementById('btn-prev').disabled = curQ === 0;
+  aggiornaNextBtn();
+}
+
+function selRis(i) {
+  risposte[curQ] = i;
+  document.querySelectorAll('.opt').forEach((el,j) => {
+    el.classList.toggle('sel', j === i);
+    el.querySelector('.opt-radio').innerHTML = j===i ? '<span style="width:6px;height:6px;border-radius:50%;background:#fff;display:block;margin:auto"></span>' : '';
+  });
+  aggiornaNextBtn();
+}
+
+function aggiornaNextBtn() {
+  const btn = document.getElementById('btn-next');
+  const isDone = curQ === DOMANDE.length - 1;
+  btn.disabled = risposte[curQ] === undefined;
+  btn.textContent = isDone ? 'Calcola il mio profilo →' : 'Avanti →';
+}
+
+function prevQ() { if(curQ > 0) { curQ--; renderDomanda(); } }
+function nextQ() {
+  if (risposte[curQ] === undefined) return;
+  if (curQ < DOMANDE.length - 1) { curQ++; renderDomanda(); }
+  else completaTest();
+}
+
+// ══════════════════════════════════════════════
+// CALCOLO RISULTATI
+// ══════════════════════════════════════════════
+function completaTest() {
+  mostra('screen-sending');
+  const aree = ["Alfabetizzazione AI","Strumenti e prompt","Applicazione professionale","Etica e sicurezza"];
+  const areaPts = {}; aree.forEach(a => areaPts[a] = 0);
+  DOMANDE.forEach((q,i) => { areaPts[q.area] += DOMANDE[i].opzioni[risposte[i]].p; });
+  const totScore = Object.values(areaPts).reduce((s,v)=>s+v,0);
+  const maxScore = DOMANDE.length * 3;
+  const pct = Math.round(totScore / maxScore * 100);
+  let livello, livDesc, lvlColor;
+  if (pct < 25) { livello="Principiante"; lvlColor="#639922";
+    livDesc="Muove i primi passi con l'AI. Il percorso formativo partirà dai fondamenti assoluti con tutti i moduli base."; }
+  else if (pct < 50) { livello="Esploratore"; lvlColor="#185FA5";
+    livDesc="Ha una familiarità iniziale con l'AI. Completerà il livello base e procederà rapidamente all'intermedio."; }
+  else if (pct < 75) { livello="Praticante"; lvlColor="#534AB7";
+    livDesc="Usa l'AI con discreta competenza. Può concentrarsi sui moduli intermedi e avanzati specifici per il suo ruolo."; }
+  else { livello="Esperto"; lvlColor="#3B6D11";
+    livDesc="Usa l'AI con piena competenza. Può puntare ai moduli avanzati e alla funzione di formatore interno."; }
+
+  const piano = calcolaPiano(areaPts, pct, anagrafica.profilo);
+  const oreStimate = piano.length * 6;
+  const timestamp = new Date().toISOString();
+
+  const record = {
+    ...anagrafica, pct, livello, livDesc, lvlColor,
+    areaPts, piano: piano.map(p=>p.cod), oreStimate, timestamp
+  };
+
+  risultatiLocali.push(record);
+  localStorage.setItem('maturita_ai_risultati', JSON.stringify(risultatiLocali));
+
+  inviaASheets(record).then(() => {
+    setTimeout(() => {
+      mostra('screen-result');
+      renderRisultati(record, aree);
+    }, 800);
+  }).catch(() => {
+    mostra('screen-result');
+    renderRisultati(record, aree);
+  });
+}
+
+function calcolaPiano(areaPts, pct, profilo) {
+  const piano = [];
+  const addIf = (cond, cod) => { if(cond && MODULI_PIANO[cod]) piano.push(MODULI_PIANO[cod]); };
+  addIf(pct < 50, 'B1');
+  addIf(areaPts["Etica e sicurezza"] < 4, 'B2');
+  addIf(areaPts["Strumenti e prompt"] < 4, 'B3');
+  addIf(profilo !== 'Personale ATA' && areaPts["Strumenti e prompt"] < 5, 'I1');
+  addIf(profilo === 'Docente' && areaPts["Applicazione professionale"] < 4, 'I2');
+  addIf(profilo === 'Docente' && areaPts["Applicazione professionale"] < 5, 'I3');
+  addIf(profilo === 'Docente' && pct >= 25, 'I6');
+  addIf(profilo === 'Personale ATA', 'I4');
+  addIf(profilo === 'Dirigente scolastico', 'I5');
+  addIf(profilo === 'Dirigente scolastico' && pct >= 50, 'A6');
+  addIf(profilo === 'Docente' && pct >= 50, 'A1');
+  addIf(profilo === 'Docente' && pct >= 50, 'A2');
+  addIf(pct >= 50, 'A3');
+  addIf(profilo === 'Formatore', 'B1');
+  addIf(profilo === 'Formatore', 'I1');
+  addIf(profilo === 'Formatore', 'A3');
+  addIf(profilo === 'Formatore', 'A4');
+  addIf(profilo === 'Formatore', 'A6');
+  return [...new Map(piano.map(p=>[p.cod,p])).values()];
+}
+
+// ══════════════════════════════════════════════
+// RENDER SCHERMATA RISULTATI
+// ══════════════════════════════════════════════
+function renderRisultati(r, aree) {
+  document.getElementById('result-nome').textContent =
+    r.nome + ' ' + r.cognome + ' · ' + r.profilo + ' · ' + r.scuola;
+  const circ = 2 * Math.PI * 32;
+  const dash = Math.round(circ * r.pct / 100);
+  const ring = document.getElementById('ring-circle');
+  ring.setAttribute('stroke', r.lvlColor);
+  ring.setAttribute('stroke-dasharray', `${dash} ${Math.round(circ - dash)}`);
+  ring.setAttribute('stroke-dashoffset', '0');
+  document.getElementById('ring-text').textContent = r.pct + '%';
+  document.getElementById('ring-text').setAttribute('fill', r.lvlColor);
+  document.getElementById('score-level').textContent = r.livello;
+  document.getElementById('score-desc').textContent = r.livDesc;
+  const areaCols = {"Alfabetizzazione AI":"#185FA5","Strumenti e prompt":"#3B6D11",
+    "Applicazione professionale":"#854F0B","Etica e sicurezza":"#3C3489"};
+  document.getElementById('aree-grid').innerHTML = aree.map(a => {
+    const v = Math.round(r.areaPts[a] / 6 * 100);
+    return `<div class="area-card">
+      <div class="area-card-name" style="color:${areaCols[a]}">${a}</div>
+      <div class="area-bar-wrap"><div class="area-bar-fill" style="width:${v}%;background:${areaCols[a]}"></div></div>
+      <div class="area-pct" style="color:${areaCols[a]}">${v}%</div>
+    </div>`;
+  }).join('');
+  document.getElementById('piano-sub').textContent =
+    r.piano.length + ' moduli consigliati · ' + r.oreStimate + ' ore totali';
+  document.getElementById('piano-items').innerHTML = r.piano.map(cod => {
+    const m = MODULI_PIANO[cod];
+    if(!m) return '';
+    return `<div class="piano-item">
+      <span class="piano-badge" style="background:${m.bg};color:${m.fg}">${m.livello} · ${m.cod}</span>
+      <div class="piano-text"><strong>${m.titolo}</strong><br>6 ore · modulo ${m.livello.toLowerCase()}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('ok-box').innerHTML =
+    `<strong>✓ I tuoi risultati sono stati registrati.</strong><br>Il coordinatore della formazione riceverà il tuo profilo e ti contatterà per confermare il percorso formativo personalizzato. Monte ore DM 219 previsto per te: <strong>${r.oreStimate} ore</strong>.`;
+}
+
+// ══════════════════════════════════════════════
+// INVIO A GOOGLE SHEETS
+// ══════════════════════════════════════════════
+async function inviaASheets(r) {
+  if (APPS_SCRIPT_URL === "INCOLLA_QUI_L_URL_DEL_TUO_APPS_SCRIPT") return;
+  try {
+    const payload = {
+      timestamp: new Date(r.timestamp).toLocaleString('it-IT'),
+      nome: r.nome + ' ' + r.cognome,
+      scuola: r.scuola,
+      email: r.email,
+      profilo: r.profilo,
+      materia: r.materia || '',
+      punteggio: r.pct,
+      livello: r.livello,
+      alfabetizzazione: Math.round(r.areaPts["Alfabetizzazione AI"] / 6 * 100),
+      strumenti: Math.round(r.areaPts["Strumenti e prompt"] / 6 * 100),
+      applicazione: Math.round(r.areaPts["Applicazione professionale"] / 6 * 100),
+      etica: Math.round(r.areaPts["Etica e sicurezza"] / 6 * 100),
+      moduli_consigliati: r.piano.join(', '),
+      ore_stimate: r.oreStimate
+    };
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  } catch(e) { console.warn('Sheets non raggiungibile, dati salvati in locale.', e); }
+}
+
+// ══════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════
+function mostraDashLogin() {
+  const pwd = prompt('Inserisci il codice di accesso alla dashboard:');
+  if (pwd === DASHBOARD_PASSWORD) {
+    mostra('screen-dash');
+    aggiornaDash();
+    document.getElementById('dash-link').href = window.location.href;
+    document.getElementById('dash-link').textContent = window.location.href;
+  } else if (pwd !== null) {
+    alert('Codice non corretto.');
+  }
+}
+
+function chiudiDash() { mostra('screen-intro'); }
+
+function aggiornaDash() {
+  const dati = risultatiLocali;
+  const n = dati.length;
+  if (n === 0) {
+    document.getElementById('kpi-grid').innerHTML = '<div class="no-data" style="grid-column:1/-1">Nessun risultato ancora. Condividi il link del test con il personale.</div>';
+    document.getElementById('dist-livelli').innerHTML = '';
+    document.getElementById('dist-profili').innerHTML = '';
+    document.getElementById('dash-tbody').innerHTML = '<tr><td colspan="6" class="no-data">Nessun dato</td></tr>';
+    return;
+  }
+  const avgPct = Math.round(dati.reduce((s,r) => s+r.pct, 0) / n);
+  const scuole = new Set(dati.map(r => r.scuola)).size;
+  const oreTotal = dati.reduce((s,r) => s + r.oreStimate, 0);
+  document.getElementById('kpi-grid').innerHTML = [
+    [n, 'Compilazioni'],
+    [scuole, 'Scuole'],
+    [avgPct + '%', 'Media punteggio'],
+    [oreTotal, 'Ore formazionestimate']
+  ].map(([v,l]) => `<div class="kpi"><div class="kpi-n">${v}</div><div class="kpi-l">${l}</div></div>`).join('');
+
+  const livCount = {Principiante:0,Esploratore:0,Praticante:0,Esperto:0};
+  dati.forEach(r => { if(livCount[r.livello]!==undefined) livCount[r.livello]++; });
+  const livColors = {Principiante:"#639922",Esploratore:"#185FA5",Praticante:"#534AB7",Esperto:"#3B6D11"};
+  document.getElementById('dist-livelli').innerHTML = '<div class="dist-title">Distribuzione per livello di maturità</div>' +
+    Object.entries(livCount).map(([l,c]) => `<div class="dist-bar-row">
+      <span style="width:90px;color:${livColors[l]};font-weight:500">${l}</span>
+      <div class="dist-bar-bg"><div class="dist-bar-fill" style="width:${n?Math.round(c/n*100):0}%;background:${livColors[l]}"></div></div>
+      <span class="dist-val">${c}</span>
+    </div>`).join('');
+
+  const profCount = {};
+  dati.forEach(r => { profCount[r.profilo] = (profCount[r.profilo]||0) + 1; });
+  document.getElementById('dist-profili').innerHTML = '<div class="dist-title">Distribuzione per profilo professionale</div>' +
+    Object.entries(profCount).map(([p,c]) => `<div class="dist-bar-row">
+      <span style="width:140px">${p}</span>
+      <div class="dist-bar-bg"><div class="dist-bar-fill" style="width:${Math.round(c/n*100)}%;background:#185FA5"></div></div>
+      <span class="dist-val">${c}</span>
+    </div>`).join('');
+
+  const lvlBg = {Principiante:"#EAF3DE",Esploratore:"#E6F1FB",Praticante:"#EEEDFE",Esperto:"#E1F5EE"};
+  const lvlFg = {Principiante:"#3B6D11",Esploratore:"#0C447C",Praticante:"#3C3489",Esperto:"#0F6E56"};
+  document.getElementById('dash-tbody').innerHTML = [...dati].reverse().map(r =>
+    `<tr><td>${r.nome} ${r.cognome}</td><td>${r.scuola}</td><td>${r.profilo}</td>
+     <td><strong>${r.pct}%</strong></td>
+     <td><span class="level-pill" style="background:${lvlBg[r.livello]||'#eee'};color:${lvlFg[r.livello]||'#333'}">${r.livello}</span></td>
+     <td>${new Date(r.timestamp).toLocaleDateString('it-IT')}</td></tr>`).join('');
+}
+
+function esportaCSV() {
+  const dati = risultatiLocali;
+  if(dati.length === 0) { alert('Nessun dato da esportare.'); return; }
+  const headers = ['Data','Nome','Scuola','Email','Profilo','Materia','Punteggio','Livello',
+    'Alfabetizzazione%','Strumenti%','Applicazione%','Etica%','Moduli consigliati','Ore stimate'];
+  const rows = dati.map(r => [
+    new Date(r.timestamp).toLocaleString('it-IT'),
+    r.nome + ' ' + r.cognome, r.scuola, r.email, r.profilo, r.materia||'',
+    r.pct, r.livello,
+    Math.round(r.areaPts["Alfabetizzazione AI"]/6*100),
+    Math.round(r.areaPts["Strumenti e prompt"]/6*100),
+    Math.round(r.areaPts["Applicazione professionale"]/6*100),
+    Math.round(r.areaPts["Etica e sicurezza"]/6*100),
+    r.piano.join('; '), r.oreStimate
+  ].map(v => `"${v}"`).join(','));
+  const csv = [headers.join(','), ...rows].join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,\uFEFF' + encodeURIComponent(csv);
+  a.download = 'maturita_ai_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+
+function ricomincia() { mostra('screen-intro'); }
+</script>
+
+</body>
+</html>
